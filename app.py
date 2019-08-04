@@ -9,6 +9,7 @@ class Board():
         self.board = [[ self.board_bx_style for x in range(col)] for r in range(rows)]
         self.option = '1'
         self.toggle_player(True)
+        self.win = False
 #---------------------------------------------------------------
     def toggle_player(self, player=False):
         if player: 
@@ -45,7 +46,7 @@ class Board():
                             self.winner(i, j, 'R','line')
                             self.winner(i, j, 'R','topline')
                             self.winner_stair(j, 'R','up')
-                            self.winner_stair(j, 'R','down')
+                            # self.winner_stair(j, 'R','down')
                             
                             #toggle user
                             self.toggle_player()
@@ -57,7 +58,7 @@ class Board():
                             self.winner(i, j,'Y', 'line')
                             self.winner(i, j, 'Y','topline')
                             self.winner_stair(j, 'Y','up')
-                            self.winner_stair(j, 'Y','down')
+                            # self.winner_stair(j, 'Y','down')
 
                             #toggle user
                             self.toggle_player(True)
@@ -79,7 +80,7 @@ class Board():
                     self.winner(i, col_position, 'R','line')
                     self.winner(i, col_position, 'R','topline')
                     self.winner_stair(col_position, 'R','up')
-                    self.winner_stair(col_position, 'R','down')
+                    # self.winner_stair(col_position, 'R','down')
 
                     #change the player
                     self.toggle_player()
@@ -91,7 +92,7 @@ class Board():
                     self.winner(i, col_position,'Y', 'line')
                     self.winner(i, col_position, 'Y','topline')
                     self.winner_stair(col_position, 'Y','up')
-                    self.winner_stair(col_position, 'Y','down')
+                    # self.winner_stair(col_position, 'Y','down')
                     
                     #change the player
                     self.toggle_player(True)
@@ -110,6 +111,7 @@ class Board():
                         # print(count)
                         if count==4:
                             print('Winner is', player,count)
+                            self.win = True
                     else:
                         count = 1
                         # print('count to zero', count)
@@ -127,6 +129,7 @@ class Board():
                         # print(count)
                         if count==4:
                             print('Winner is', player,count)
+                            self.win = True
                     else:
                         count = 1
                         # print('count to zero', count)
@@ -135,26 +138,31 @@ class Board():
                     # print('Reset to zero', count)
 #---------------------------------------------------------------
     def winner_stair(self, j, player, method):
-        #up stair
-        count = 1
-        plus = 0
-        for pos in range(len(self.board)):
-            try:        
-                data = j-plus if method == 'up' else j+plus
-                if self.board[pos][data] == player:
-                    count +=1
-                    plus +=1 
-
-                    if count==4:
-                        print('Winner is', player, count)
-                else:
-                    count=0
-                    plus=0
-            except:
-                pass
+        print('EVALUATING UP')
+        for row in range(len(self.board)):
+            for col in range(len(self.board[0])):
+                if self.board[row][col] == player:
+                    print('Input: {}, i:{}, j:{}'.format(player, row, col))
+                    self.up(row, col, player)
 #---------------------------------------------------------------
+    def up(self, i, j, player):
+        count = 0
+        plus = 0
+        print('=======UP=========')
+        for row in range(i, len(self.board)):
+            if self.board[row][j-plus] == player:
+                print("Value:{}, i:{}, j:{}, plus:{}".format(player, row, j-plus, plus))
+                plus+=1
+                count +=1
+
+                if count == 4:
+                    print("Winner is {} with {} in a row".format(player, count))
+                    self.win = True
+        print('=======UP=========')
+#---------------------------------------------------------------
+
 table = Board(6,5)
 
-while table.option != '0':
+while table.option != '0' or not table.win:
     table.show_table()
     table.play()
