@@ -9,7 +9,7 @@ Connect Four is a two-player connection game in which the players first choose a
 Python version 3 >=
 
 ## Usage
-in terminal at folder directory:
+in terminal at app.py directory:
 
 ```python
 python app.py
