@@ -5,7 +5,8 @@ Raul Pichardo
 
 class Board():
     def __init__(self, col, rows):
-        self.board = [[ '0' for x in range(col)] for r in range(rows)]
+        self.board_bx_style = '0'
+        self.board = [[ self.board_bx_style for x in range(col)] for r in range(rows)]
         self.option = '1'
         self.toggle_player(True)
 #---------------------------------------------------------------
@@ -34,7 +35,7 @@ class Board():
         for i in range(len(self.board)-1, -1, -1):
             for j in range(len(self.board[0])):
                 if int(self.option) == (j+1):
-                    if self.board[i][j] == '0':
+                    if self.board[i][j] == self.board_bx_style:
                         if self.player_red:
                             
                             #fill up the board
@@ -43,8 +44,8 @@ class Board():
                             #determine winning
                             self.winner(i, j, 'R','line')
                             self.winner(i, j, 'R','topline')
-                            self.winner(i, j, 'R','upstair')
-                            self.winner(i, j, 'R','downstair')
+                            self.winner_stair(j, 'R','up')
+                            self.winner_stair(j, 'R','down')
                             
                             #toggle user
                             self.toggle_player()
@@ -55,8 +56,8 @@ class Board():
                             #determine winner
                             self.winner(i, j,'Y', 'line')
                             self.winner(i, j, 'Y','topline')
-                            self.winner(i, j, 'Y','upstair')
-                            self.winner(i, j, 'Y','downstair')
+                            self.winner_stair(j, 'Y','up')
+                            self.winner_stair(j, 'Y','down')
 
                             #toggle user
                             self.toggle_player(True)
@@ -64,6 +65,37 @@ class Board():
                         #evaluate column
                         self.evaluate_column(j)
                     return
+#---------------------------------------------------------------
+    def evaluate_column(self, col_position):
+        # print("evaluating the game")
+        for i in range(len(self.board)-1, -1, -1):
+            if self.board[i][col_position] == self.board_bx_style:
+                # print('row', i, 'col', col_position, 'Value', self.board[i][col_position])
+                if self.player_red:
+                    #fill the board
+                    self.board[i][col_position] = 'R'
+                    
+                    #verify is there is a winner
+                    self.winner(i, col_position, 'R','line')
+                    self.winner(i, col_position, 'R','topline')
+                    self.winner_stair(col_position, 'R','up')
+                    self.winner_stair(col_position, 'R','down')
+
+                    #change the player
+                    self.toggle_player()
+                else:
+                    #fill the board with the Y
+                    self.board[i][col_position] = 'Y'
+
+                    #verify is there is a winner
+                    self.winner(i, col_position,'Y', 'line')
+                    self.winner(i, col_position, 'Y','topline')
+                    self.winner_stair(col_position, 'Y','up')
+                    self.winner_stair(col_position, 'Y','down')
+                    
+                    #change the player
+                    self.toggle_player(True)
+                break
 
 #---------------------------------------------------------------
     def winner(self, i, j, player,method):
@@ -101,69 +133,26 @@ class Board():
                 else:
                     count = 1
                     # print('Reset to zero', count)
+#---------------------------------------------------------------
+    def winner_stair(self, j, player, method):
         #up stair
-        elif method == 'upstair':
-            count = 1
-            plus = 0
-            for pos in range(len(self.board)):
-                try:
-                    if self.board[pos][j-plus] == player:
-                        # print('Value', self.board[pos][j-plus], "Position {} {}".format(pos, j-plus))
-                        count +=1
-                        plus +=1 
+        count = 1
+        plus = 0
+        for pos in range(len(self.board)):
+            try:        
+                data = j-plus if method == 'up' else j+plus
+                if self.board[pos][data] == player:
+                    count +=1
+                    plus +=1 
 
-                        if count==4:
-                            print('Winner is', player,count)
-                    else:
-                        # print('reset')
-                        count=0
-                        plus=0
-                except:
-                    pass
-        elif method == 'downstair':
-            count = 1
-            plus = 0
-            for pos in range(len(self.board)):
-                try:
-                    if self.board[pos][j+plus] == player:
-                        # print('Value', self.board[pos][j+plus], "Position {} {}".format(pos, j+plus))
-                        count +=1
-                        plus +=1 
-
-                        if count==4:
-                            print('Winner is', player,count)
-                    else:
-                        # print('reset')
-                        count=0
-                        plus=0
-                except:
-                    print('out of range')
-                    pass
-#---------------------------------------------------------------
-    def evaluate_column(self, col_position):
-        # print("evaluating the game")
-        for i in range(len(self.board)-1, -1, -1):
-            if self.board[i][col_position] == '0':
-                # print('row', i, 'col', col_position, 'Value', self.board[i][col_position])
-                if self.player_red:
-                    self.board[i][col_position] = 'R'
-                    self.winner(i, col_position, 'R','line')
-                    self.winner(i, col_position, 'R','topline')
-                    self.winner(i, col_position, 'R','upstair')
-                    self.winner(i, col_position, 'R','downstair')
-
-                    self.toggle_player()
+                    if count==4:
+                        print('Winner is', player, count)
                 else:
-                    self.board[i][col_position] = 'Y'
-                    self.winner(i, col_position,'Y', 'line')
-                    self.winner(i, col_position, 'Y','topline')
-                    self.winner(i, col_position, 'Y','upstair')
-                    self.winner(i, col_position, 'Y','downstair')
-
-                    self.toggle_player(True)
-                break
+                    count=0
+                    plus=0
+            except:
+                pass
 #---------------------------------------------------------------
-
 table = Board(6,5)
 
 while table.option != '0':
