@@ -14,3 +14,6 @@ in terminal at folder directory:
 ```python
 python app.py
 ```
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
