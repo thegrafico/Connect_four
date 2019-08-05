@@ -41,12 +41,11 @@ class Board():
         """
         This function show the board with all plays. Also shows the position in the board to play
         """
+        board_position = [str(x) for x in range(1, len(self.board[0] ) + 1)]
+        print("\n====SELECT POSITION TO PLAY====")
+        print(board_position)
+        print("\n===============================\n")
         for position, value in enumerate(self.board):
-            if position == 0:
-                print("SELECT POSITION:")
-                for i in range(len(self.board[0])):
-                    print( (i+1), end='     ')
-                print("\n======================\n")
             print(value)
 #---------------------------------------------------------------   
     def play(self):
@@ -207,12 +206,14 @@ class Board():
         #Iterate all over the board
         for row in range(len(self.board)):
             for col in range(len(self.board[0])):
-
-                #if found player mark
-                if self.board[row][col] == player:
-                    
-                    #Call the function to determine the winner. if was diagonal up or diagonal down
-                    self.up_down(row, col, player, method)
+                try:
+                    #if found player mark
+                    if self.board[row][col] == player:
+                        
+                        #Call the function to determine the winner. if was diagonal up or diagonal down
+                        self.up_down(row, col, player, method)
+                except:
+                    pass
 #---------------------------------------------------------------
     def up_down(self, i, j, player, method):
         count = 0
@@ -223,19 +224,21 @@ class Board():
             
             #Depending of the method we evaluated diagonal up or down. 
             col = j-plus if method=='up' else j+plus
-            
-            #Row stay the same, only col change. 
-            if self.board[row][col] == player:
-                
-                #diagonal variable
-                plus+=1
-                
-                count +=1
+            try:
+                #Row stay the same, only col change. 
+                if self.board[row][col] == player:
+                    
+                    #diagonal variable
+                    plus+=1
+                    
+                    count +=1
 
-                #determine a winner
-                if count == 4:
-                    print("Winner is {} with {} in a row".format(player, count))
-                    self.gameover = True
+                    #determine a winner
+                    if count == 4:
+                        print("Winner is {} with {} in a row".format(player, count))
+                        self.gameover = True
+            except:
+                pass
 #---------------------------------------------------------------
 
 #Instance of the class. Board size 6 cols, 5 rows
